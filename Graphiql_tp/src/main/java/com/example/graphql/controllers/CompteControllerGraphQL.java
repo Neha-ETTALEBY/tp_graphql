@@ -8,6 +8,7 @@ import com.example.graphql.repositories.TransactionRepository;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
+import org.springframework.graphql.data.method.annotation.SchemaMapping;
 import org.springframework.stereotype.Controller;
 import lombok.AllArgsConstructor;
 
@@ -82,9 +83,9 @@ public class CompteControllerGraphQL {
                 .orElseThrow(() -> new RuntimeException("Compte not found"));
 
         // Update solde based on transaction type
-        if ("credit".equalsIgnoreCase(type)) {
+        if ("DEPOT".equalsIgnoreCase(type)) {
             compte.setSolde(compte.getSolde() + montant);
-        } else if ("debit".equalsIgnoreCase(type)) {
+        } else if ("RETRAIT".equalsIgnoreCase(type)) {
             if (compte.getSolde() < montant) {
                 throw new RuntimeException("Insufficient balance");
             }
@@ -101,5 +102,10 @@ public class CompteControllerGraphQL {
         transaction.setType(type);
         transaction.setDateTransaction(LocalDate.now());
         return transactionRepository.save(transaction);
+    }
+
+    @SchemaMapping(typeName = "Transaction", field = "compte")
+    public Compte getCompte(Transaction transaction) {
+        return transaction.getCompte();
     }
 }

@@ -17,8 +17,8 @@ type Transaction {
   montant: Float
   type: String
   dateTransaction: String
+  compte: Compte # Lien vers l'objet Compte
 }
-
 type Compte {
   id: ID
   solde: Float
